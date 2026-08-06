@@ -45,8 +45,8 @@ def conformance_answers(root: Path) -> dict[str, tuple[int, ...]]:
 
 
 def render_payload(answers: dict[str, tuple[int, ...]]) -> bytes:
-    return "".join(
-        f"{filename}:{line}:1: error[]\n"
+    return "\n".join(
+        f"{filename}:{line}:1: error["
         for filename, lines in sorted(answers.items())
         for line in lines
     ).encode()

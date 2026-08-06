@@ -6,7 +6,7 @@ doing even less.
 `ultrafastest` is an Apple Silicon Mach-O containing frozen Python typing
 conformance diagnostics. It has no language runtime, parser, lookup table, or
 formatter. Every invocation makes two raw Darwin system calls: `write` emits
-the already-formatted 41 KB payload, then `exit` returns diagnostic status 1.
+the already-formatted 40 KB payload, then `exit` returns diagnostic status 1.
 The binary links only libSystem because the Darwin linker requires it.
 
 This is not a type checker. It ignores every argument and every file.
@@ -16,7 +16,7 @@ This is not a type checker. It ignores every argument and every file.
 ```console
 $ make
 $ ./ultrafastest check anything.py | head -1
-annotations_callable.py:19:1: error[]
+annotations_callable.py:19:1: error[
 ```
 
 The frozen payload comes from the `python/typing` conformance suite at commit
@@ -38,10 +38,11 @@ $ make benchmark CONFORMANCE=../typing/conformance UPSTREAM=../ultrafaster/ultra
 ```
 
 Apple Silicon results will vary by machine. This repository's measured result
-on an Apple M4 Pro, using 50 warmups and 1,000 alternating runs:
+on an Apple M4 Pro, using five batches of 50 warmups and 1,000 alternating
+runs:
 
 ```console
-ultrafastest:   1.666 ms median (1.389 ms minimum)
-ultrafaster:    1.759 ms median (1.485 ms minimum)
+ultrafastest:   1.510 ms median (1.354 ms minimum)
+ultrafaster:    1.609 ms median (1.434 ms minimum)
 speedup: 1.1x
 ```
