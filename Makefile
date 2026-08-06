@@ -2,6 +2,7 @@ CC ?= clang
 LD ?= ld
 CONFORMANCE ?= ../typing/conformance
 UPSTREAM ?= ../ultrafaster/ultrafaster
+ULTRAFAST ?= ../ultrafast/.venv/bin/ultrafast
 MACOS_SDK := $(shell xcrun --sdk macosx --show-sdk-path)
 PAYLOAD_SIZE := $(shell stat -f%z src/payload.bin)
 
@@ -24,7 +25,7 @@ verify: ultrafastest
 	uv run scripts/verify.py $(CONFORMANCE) ./ultrafastest
 
 benchmark: ultrafastest
-	uv run scripts/benchmark.py $(CONFORMANCE) ./ultrafastest $(UPSTREAM)
+	uv run scripts/benchmark.py $(CONFORMANCE) ./ultrafastest $(UPSTREAM) $(ULTRAFAST)
 
 clean:
 	rm -f ultrafastest src/ultrafastest.o
