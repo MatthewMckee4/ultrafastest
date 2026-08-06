@@ -1,7 +1,7 @@
 # ultrafastest
 
-Faster than [`ultrafaster`](https://github.com/AlexWaygood/ultrafaster), by
-doing even less.
+Faster than [`ultrafaster`](https://github.com/AlexWaygood/ultrafaster) and
+[`ultrafast`](https://github.com/JelleZijlstra/ultrafast), by doing even less.
 
 `ultrafastest` is an Apple Silicon Mach-O containing frozen Python typing
 conformance diagnostics. It has no language runtime, parser, lookup table, or
@@ -30,19 +30,31 @@ PASS: 141 files conform (1042 diagnostic lines)
 
 ## Benchmark
 
-Build Alex's `ultrafaster`, then run both executables over the same 141 paths.
-The harness copies them to equal-length paths and alternates run order to reduce
-filesystem and timing bias.
+Build Alex's `ultrafaster` and install Jelle's `ultrafast`, then run all three
+over the same 141 paths. The harness copies them to equal-length executable
+paths and uses hyperfine without a shell.
 
 ```console
-$ make benchmark CONFORMANCE=../typing/conformance UPSTREAM=../ultrafaster/ultrafaster
+$ uv sync --directory ../ultrafast
+$ make benchmark CONFORMANCE=../typing/conformance \
+    UPSTREAM=../ultrafaster/ultrafaster \
+    ULTRAFAST=../ultrafast/.venv/bin/ultrafast
 ```
 
 Apple Silicon results will vary by machine. This repository's measured result
-on an Apple M4 Pro, using 100 warmups and 5,000 alternating runs:
+on an Apple M4 Pro with Python 3.12.12, using hyperfine 1.20.0, 100 warmups,
+and 5,000 runs per checker:
 
 ```console
-ultrafastest:   1.543 ms median (1.358 ms minimum)
-ultrafaster:    1.648 ms median (1.457 ms minimum)
-speedup: 1.068x
+Benchmark 1: ultrafastest
+  Time (mean ± σ):       1.0 ms ±   0.1 ms
+Benchmark 2: ultrafaster
+  Time (mean ± σ):       1.1 ms ±   0.1 ms
+Benchmark 3: ultrafast
+  Time (mean ± σ):      10.9 ms ±   0.5 ms
+
+Summary
+  ultrafastest ran
+    1.11 ± 0.09 times faster than ultrafaster
+   10.85 ± 0.82 times faster than ultrafast
 ```
