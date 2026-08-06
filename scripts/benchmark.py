@@ -8,8 +8,10 @@
 from __future__ import annotations
 
 import argparse
+import shutil
 import statistics
 import subprocess
+import tempfile
 import time
 from pathlib import Path
 
@@ -52,29 +54,34 @@ def main() -> int:
         for path in (root / "tests").glob(pattern)
         if path.name.split("_")[0] in groups
     )
-    commands = {
-        "ultrafastest": [str(arguments.candidate.resolve()), "check", *paths],
-        "ultrafaster": [str(arguments.upstream.resolve()), "check", *paths],
-    }
-    for _ in range(arguments.warmups):
-        for command in commands.values():
-            run_once(command, root / "tests")
+    with tempfile.TemporaryDirectory() as temporary_directory:
+        candidate = Path(temporary_directory) / "candidate"
+        upstream = Path(temporary_directory) / "reference"
+        shutil.copy2(arguments.candidate.resolve(), candidate)
+        shutil.copy2(arguments.upstream.resolve(), upstream)
+        commands = {
+            "ultrafastest": [str(candidate), "check", *paths],
+            "ultrafaster": [str(upstream), "check", *paths],
+        }
+        for _ in range(arguments.warmups):
+            for command in commands.values():
+                run_once(command, root / "tests")
 
-    results = {name: [] for name in commands}
-    for run in range(arguments.runs):
-        order = tuple(commands) if run % 2 == 0 else tuple(reversed(commands))
-        for name in order:
-            results[name].append(run_once(commands[name], root / "tests"))
+        results = {name: [] for name in commands}
+        for run in range(arguments.runs):
+            order = tuple(commands) if run % 2 == 0 else tuple(reversed(commands))
+            for name in order:
+                results[name].append(run_once(commands[name], root / "tests"))
 
-    for name, timings in results.items():
+        for name, timings in results.items():
+            print(
+                f"{name}: {statistics.median(timings):7.3f} ms median "
+                f"({min(timings):.3f} ms minimum)"
+            )
         print(
-            f"{name}: {statistics.median(timings):7.3f} ms median "
-            f"({min(timings):.3f} ms minimum)"
+            "speedup: "
+            f"{statistics.median(results['ultrafaster']) / statistics.median(results['ultrafastest']):.3f}x"
         )
-    print(
-        "speedup: "
-        f"{statistics.median(results['ultrafaster']) / statistics.median(results['ultrafastest']):.1f}x"
-    )
     return 0
 
 
