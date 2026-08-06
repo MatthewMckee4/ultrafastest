@@ -13,7 +13,8 @@ ultrafastest: src/ultrafastest.S src/payload.bin
 	$(CC) -target arm64-apple-macos11 -DPAYLOAD_SIZE=$(PAYLOAD_SIZE) \
 		-c -o src/ultrafastest.o src/ultrafastest.S
 	$(LD) -arch arm64 -e _start -platform_version macos 11.0 15.0 \
-		-no_function_starts -x \
+		-no_data_in_code_info -no_function_starts -no_source_version \
+		-no_uuid -x \
 		-syslibroot $(MACOS_SDK) -lSystem -o $@ src/ultrafastest.o
 
 oracle:

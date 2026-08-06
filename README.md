@@ -31,18 +31,18 @@ PASS: 141 files conform (1042 diagnostic lines)
 ## Benchmark
 
 Build Alex's `ultrafaster`, then run both executables over the same 141 paths.
-Runs alternate order to reduce timing bias.
+The harness copies them to equal-length paths and alternates run order to reduce
+filesystem and timing bias.
 
 ```console
 $ make benchmark CONFORMANCE=../typing/conformance UPSTREAM=../ultrafaster/ultrafaster
 ```
 
 Apple Silicon results will vary by machine. This repository's measured result
-on an Apple M4 Pro, using five batches of 50 warmups and 1,000 alternating
-runs:
+on an Apple M4 Pro, using 100 warmups and 5,000 alternating runs:
 
 ```console
-ultrafastest:   1.510 ms median (1.354 ms minimum)
-ultrafaster:    1.609 ms median (1.434 ms minimum)
-speedup: 1.1x
+ultrafastest:   1.543 ms median (1.358 ms minimum)
+ultrafaster:    1.648 ms median (1.457 ms minimum)
+speedup: 1.068x
 ```
