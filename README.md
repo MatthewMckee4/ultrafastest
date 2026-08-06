@@ -51,10 +51,10 @@ Benchmark 1: ultrafastest
 Benchmark 2: ultrafaster
   Time (mean ± σ):       1.1 ms ±   0.1 ms
 Benchmark 3: ultrafast
-  Time (mean ± σ):      10.9 ms ±   0.5 ms
+  Time (mean ± σ):      11.1 ms ±   0.4 ms
 
 Summary
   ultrafastest ran
-    1.11 ± 0.09 times faster than ultrafaster
-   10.85 ± 0.82 times faster than ultrafast
+    1.10 ± 0.08 times faster than ultrafaster
+   11.00 ± 0.70 times faster than ultrafast
 ```
